@@ -1,4 +1,5 @@
 import { createElement } from '../helper/createElement.js';
+import { declOfNum } from '../helper/declOfNum.js';
 
 export const createCategory = (app) => {
   const category = createElement('section', { className: 'category section-offset' });
@@ -27,7 +28,7 @@ export const createCategory = (app) => {
     });
     const buttonPairs = createElement('span', {
       className: 'category__pairs',
-      textContent: `${data.length} пар`,
+      textContent: declOfNum(data.length, ['пара', 'пары', 'пар']),
     });
     button.append(buttonTitle, buttonPairs);
 
