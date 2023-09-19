@@ -70,12 +70,12 @@ export const createEditCategory = (app) => {
   const createTrCell = (dataArr) => {
     const tr = createElement('tr');
 
-    const tableCell1 = createElement('th', {
+    const tableCell1 = createElement('td', {
       className: 'table__cell table__cell_one',
       textContent: dataArr[0],
       contentEditable: true,
     });
-    const tableCell2 = createElement('th', {
+    const tableCell2 = createElement('td', {
       className: 'table__cell table__cell_two',
       textContent: dataArr[1],
       contentEditable: true,
@@ -121,6 +121,33 @@ export const createEditCategory = (app) => {
     tbody.append(emptyRow);
   });
 
+  const parseData = () => {
+    const cellsMain = document.querySelectorAll('.table__cell_one');
+    const cellsSecond = document.querySelectorAll('.table__cell_two');
+
+    const data = {
+      pairs: [],
+    };
+
+    for (let i = 0; i < cellsMain.length; i++) {
+      const textMain = cellsMain[i].textContent.trim();
+      const textSecond = cellsSecond[i].textContent.trim();
+      if (textMain && textSecond) {
+        data.pairs.push([textMain, textSecond]);
+      }
+    }
+
+    if (title.textContent.trim() && title.textContent !== TITLE) {
+      data.title = title.textContent.trim();
+    }
+
+    if (btnSave.dataset.id) {
+      data.id = btnSave.dataset.id;
+    }
+
+    return data;
+  };
+
   const mount = (data = { title: TITLE, pairs: [] }) => {
     tbody.textContent = '';
     title.textContent = data.title;
@@ -134,7 +161,9 @@ export const createEditCategory = (app) => {
     const rows = data.pairs.map(createTrCell);
     const emptyRow = createTrCell(['', '']);
     tbody.append(...rows, emptyRow);
-    
+
+    btnSave.dataset.id = data.id ? data.id : '';
+
     app.append(editCategory);
   };
 
@@ -142,5 +171,5 @@ export const createEditCategory = (app) => {
     editCategory.remove();
   };
 
-  return { unmount, mount };
+  return { unmount, mount, parseData, btnSave, btnCancel };
 };
