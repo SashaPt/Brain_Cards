@@ -15,13 +15,14 @@ const initApp = async () => {
   const pairsObj = createPairs(app);
 
   const allSectionUnmount = () => {
-    [categoryObject, editCategoryObj, pairsObj].forEach(obj => obj.unmount());
-  }
+    [categoryObject, editCategoryObj, pairsObj].forEach((obj) => obj.unmount());
+  };
 
   const returnIndex = async (e) => {
     e?.preventDefault();
     allSectionUnmount();
     const categories = await fetchCategories();
+    headerObj.updateHeaderTitle('Категории');
     if (categories.error) {
       app.append(
         createElement('p', {
@@ -44,7 +45,7 @@ const initApp = async () => {
     editCategoryObj.mount();
   });
 
-  categoryObject.categoryList.addEventListener('click', async ({target}) => {
+  categoryObject.categoryList.addEventListener('click', async ({ target }) => {
     const categoryItem = target.closest('.category__item');
 
     if (target.closest('.category__edit')) {
@@ -52,7 +53,22 @@ const initApp = async () => {
       allSectionUnmount();
       headerObj.updateHeaderTitle('Редактирование');
       editCategoryObj.mount(dataCards);
+      return;
     }
-  })
+
+    if (target.closest('.category__del')) {
+      return;
+    }
+
+    if (categoryItem) {
+      allSectionUnmount();
+
+      const dataCards = await fetchCards(categoryItem.dataset.id);
+      headerObj.updateHeaderTitle(dataCards.title);
+      pairsObj.mount(dataCards);
+    }
+  });
+
+  pairsObj.btnReturn.addEventListener('click', returnIndex);
 };
 initApp();
